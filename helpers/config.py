@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     OPENAI_KEY : str
     FILE_ALLOWED_TYPES: list
     FILE_ALLOWED_SIZE: int
+    FILE_DEFAULT_CHUNK_SIZE: int
 
 
     class Config():
