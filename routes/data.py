@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from helpers.config import get_settings, Settings
 from controllers import DataController, ProjectController
 import os
+import aiofiles
 
 data_router = APIRouter(
     prefix="/api/v1/data",
@@ -28,9 +29,15 @@ async def upload_file(project_id: str,file: UploadFile, app_settings: Settings= 
         project_dir_path,
         file.filename
     )
-    
-    # save the file
-    result = ProjectController().save_uploaded_file(file=file,project_id=project_id)
-    return result
+
+    async with aiofiles.open(project_file_path,'wb') as f:
+        while chunk := await file.read(app_settings.FILE_DEFAULT_CHUNK_SIZE):
+            f.write(chunk)
+
+    return JSONResponse(
+            content={
+                "result_signal": result_signal
+            }
+        )
 
     
